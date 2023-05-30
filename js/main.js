@@ -41,24 +41,33 @@ const pecas = {
 controle.forEach((elem) => {
   elem.addEventListener("click", (event) => {
     manipulaDados(event.target.dataset.controle, event.target.parentNode);
-    atualizaEstatisticas(event.target.dataset.peca);
+    const operacao = event.target.dataset.controle === "+" ? "+" : "-";
+    atualizaEstatisticas(event.target.dataset.peca, operacao);
   });
 });
 
 const manipulaDados = (operacao, controle) => {
   const peca = controle.querySelector("[data-contador]");
+  const valorAtual = parseInt(peca.value);
 
   if (operacao === "+") {
-    peca.value = parseInt(peca.value) + 1;
-  } else if (peca.value > 0) {
-    peca.value = parseInt(peca.value) - 1;
+    peca.value = (valorAtual + 1).toString().padStart(2, "0");
+  } else if (valorAtual > 0 && operacao === "-") {
+    peca.value = (valorAtual - 1).toString().padStart(2, "0");
   }
 };
 
-const atualizaEstatisticas = (peca) => {
-  estatisticas.forEach(
-    (elem) =>
-      (elem.textContent =
-        parseInt(elem.textContent) + pecas[peca][elem.dataset.estatistica])
-  );
+const atualizaEstatisticas = (peca, operacao) => {
+  const valoresPeca = pecas[peca];
+
+  estatisticas.forEach((elem) => {
+    const valorAtual = parseInt(elem.textContent);
+    const valorPeca = valoresPeca[elem.dataset.estatistica];
+
+    if (operacao === "+") {
+      elem.textContent = (valorAtual + valorPeca).toString();
+    } else if (valorAtual > 0 && operacao === "-") {
+      elem.textContent = (valorAtual - valorPeca).toString();
+    }
+  });
 };
